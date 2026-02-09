@@ -2,8 +2,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from .models import Photo, Like, Profile
-from .forms import PhotoForm, ProfileForm
+from .models import *
+from .forms import *
+from django.contrib.auth.forms import UserCreationForm
 
 def home(request):
     query = request.GET.get('q')
@@ -15,12 +16,12 @@ def home(request):
             Q(tags__icontains=query)
         )
 
-    return render(request, 'core/home.html', {'photos': photos})
+    return render(request, 'home.html', {'photos': photos})
 
 
 def photo_detail(request, pk):
     photo = get_object_or_404(Photo, pk=pk)
-    return render(request, 'core/photo_detail.html', {'photo': photo})
+    return render(request, 'photo_detail.html', {'photo': photo})
 
 
 @login_required
@@ -35,7 +36,7 @@ def upload_photo(request):
     else:
         form = PhotoForm()
 
-    return render(request, 'core/upload_photo.html', {'form': form})
+    return render(request, 'upload_photo.html', {'form': form})
 
 
 @login_required
@@ -49,7 +50,7 @@ def edit_photo(request, pk):
         form.save()
         return redirect('photo_detail', pk=pk)
 
-    return render(request, 'core/edit_photo.html', {'form': form})
+    return render(request, 'edit_photo.html', {'form': form})
 
 
 @login_required
@@ -71,5 +72,20 @@ def profile(request):
     if form.is_valid():
         form.save()
 
-    return render(request, 'core/profile.html', {'form': form})
+    return render(request, 'profile.html', {'form': form})
 
+
+
+def signup(request):
+    form = UserCreationForm(request.POST or None)
+
+    for field in form.fields.values():
+        field.widget.attrs.update({
+            'class': 'w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black'
+        })
+
+    if form.is_valid():
+        form.save()
+        return redirect('login')
+
+    return render(request, 'registration/signup.html', {'form': form})

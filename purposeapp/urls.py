@@ -7,5 +7,7 @@ urlpatterns = [
     path('photo/<int:pk>/', views.photo_detail, name='photo_detail'),
     path('photo/<int:pk>/edit/', views.edit_photo, name='edit_photo'),
     path('react/<int:pk>/<int:value>/', views.react_photo, name='react_photo'),
-    path('profile/', views.profile, name='profile'),
+    path('accounts/profile/', views.profile, name='profile'),
+    path('accounts/signup/', views.signup, name='signup'),
+
 ]

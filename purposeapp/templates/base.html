@@ -10,8 +10,16 @@
   <a href="/">Purpose Photos</a>
   <div>
     {% if user.is_authenticated %}
-      <a href="/profile/">Profile</a>
-      <a href="{% url 'logout' %}" class="ml-4">Logout</a>
+      <a href="accounts/profile/">Profile</a>
+      <form method="post" action="{% url 'logout' %}" class="inline">
+  {% csrf_token %}
+ <button
+  type="submit"
+  class="ml-4 text-white hover:underline bg-transparent border-none cursor-pointer"
+>
+    Logout
+  </button>
+</form>
     {% else %}
       <a href="{% url 'login' %}">Login</a>
     {% endif %}
