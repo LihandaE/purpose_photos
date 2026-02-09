@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<img src="{{ photo.image.url }}" class="w-full max-h-96 object-cover">
+
+<h2 class="text-xl font-bold mt-4">{{ photo.title }}</h2>
+<p>{{ photo.tags }}</p>
+
+<div class="flex gap-4 mt-4">
+  <a href="{% url 'react_photo' photo.id 1 %}" class="text-green-600">
+    👍 {{ photo.total_likes }}
+  </a>
+  <a href="{% url 'react_photo' photo.id -1 %}" class="text-red-600">
+    👎 {{ photo.total_dislikes }}
+  </a>
+</div>
+{% endblock %}
