@@ -1,20 +1,29 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h2 class="text-2xl font-bold mb-4">Purpose Photos</h2>
-<p class="mb-6 text-gray-600">
-  A platform where photos tell stories with purpose.
-</p>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-  {% for photo in photos %}
-    <a href="{% url 'photo_detail' photo.id %}" class="bg-white rounded shadow">
-      <img src="{{ photo.image.url }}" class="w-full h-60 object-cover">
-      <div class="p-4">
-        <h3 class="font-semibold">{{ photo.title }}</h3>
-        <p class="text-sm text-gray-500">{{ photo.tags }}</p>
-      </div>
-    </a>
-  {% endfor %}
+<h1 class="text-2xl font-bold mb-2">Purpose Photos</h1>
+<p class="mb-6 text-gray-600">A gallery where photos tell stories.</p>
+
+<form method="GET" class="mb-6">
+  <input name="q" placeholder="Search photos..." class="border p-2 rounded w-full md:w-1/2">
+</form>
+
+{% if user.is_authenticated %}
+<a href="{% url 'upload_photo' %}" class="bg-black text-white px-4 py-2 rounded">
+  Upload Photo
+</a>
+{% endif %}
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+{% for photo in photos %}
+  <a href="{% url 'photo_detail' photo.id %}" class="bg-white rounded shadow">
+    <img src="{{ photo.image.url }}" class="w-full h-60 object-cover">
+    <div class="p-4">
+      <h3 class="font-semibold">{{ photo.title }}</h3>
+      <p class="text-sm text-gray-500">{{ photo.tags }}</p>
+    </div>
+  </a>
+{% endfor %}
 </div>
+
 {% endblock %}
