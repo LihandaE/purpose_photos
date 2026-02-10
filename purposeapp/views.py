@@ -2,9 +2,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.contrib.auth.forms import UserCreationForm
 from .models import *
 from .forms import *
-from django.contrib.auth.forms import UserCreationForm
+
 
 def home(request):
     query = request.GET.get('q')
@@ -42,6 +43,7 @@ def upload_photo(request):
 @login_required
 def edit_photo(request, pk):
     photo = get_object_or_404(Photo, pk=pk)
+
     if photo.owner != request.user:
         return redirect('home')
 
@@ -53,14 +55,37 @@ def edit_photo(request, pk):
     return render(request, 'edit_photo.html', {'form': form})
 
 
+
 @login_required
 def react_photo(request, pk, value):
     photo = get_object_or_404(Photo, pk=pk)
-    Like.objects.update_or_create(
-        user=request.user,
-        photo=photo,
-        defaults={'value': value}
-    )
+
+    
+    if photo.owner == request.user:
+        return redirect('photo_detail', pk=pk)
+
+    if value == 1:
+       
+        Like.objects.get_or_create(
+            user=request.user,
+            photo=photo
+        )
+        Dislike.objects.filter(
+            user=request.user,
+            photo=photo
+        ).delete()
+
+    elif value == 0:
+       
+        Dislike.objects.get_or_create(
+            user=request.user,
+            photo=photo
+        )
+        Like.objects.filter(
+            user=request.user,
+            photo=photo
+        ).delete()
+
     return redirect('photo_detail', pk=pk)
 
 
@@ -71,9 +96,9 @@ def profile(request):
 
     if form.is_valid():
         form.save()
+        return redirect('profile')
 
     return render(request, 'profile.html', {'form': form})
-
 
 
 def signup(request):
@@ -89,3 +114,14 @@ def signup(request):
         return redirect('login')
 
     return render(request, 'registration/signup.html', {'form': form})
+
+
+@login_required
+def delete_photo(request, pk):
+    photo = get_object_or_404(Photo, pk=pk)
+
+    if photo.owner != request.user:
+        return redirect('photo_detail', pk=pk)
+
+    photo.delete()
+    return redirect('home')
